@@ -317,7 +317,9 @@ static void jabber_hfu_send_url_to_conv(PurpleXfer *xfer)
         if (conv_type == PURPLE_CONV_TYPE_CHAT)
         {
             PurpleConvChat *conv_chat = purple_conversation_get_chat_data(conv);
-            purple_conv_chat_send(conv_chat, hfux->get_url);
+            g_hash_table_insert(ht_hfu_sending, hfux->get_url, hfux);
+           purple_conv_chat_send_with_flags(conv_chat, hfux->get_url, PURPLE_MESSAGE_RAW);
+	   g_hash_table_remove(ht_hfu_sending, hfux->get_url);
         }
         else if (conv_type == PURPLE_CONV_TYPE_IM)
         {
@@ -512,7 +514,7 @@ static GList *jabber_hfu_blist_node_menu(PurpleBlistNode *node)
                 PURPLE_CALLBACK(jabber_hfu_send_act),
                 NULL, NULL);
 
-    menu = g_list_append(menu, act);
+    menu = g_list_prepend(menu, act);
 
     return menu;
 }
